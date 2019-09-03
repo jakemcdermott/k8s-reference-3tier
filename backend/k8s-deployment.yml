@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment 
+metadata:
+  name: app
+  labels:
+    name: app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      name: app
+  template:
+    metadata:
+      labels:
+        name: app
+    spec:
+      containers:
+        - name: app
+          image: example/app:latest
+          imagePullPolicy: "Always"
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: DATABASE_NAME
+              value: app_db
+            - name: DATABASE_USER
+              value: app_db_user
+            - name: DATABASE_PASSWORD
+              value: app_db_pw
+          ports:
+            - name: http
+              containerPort: 8000
